@@ -8,9 +8,6 @@
 #define A                          27
 #define B                          19
 #define C                          14
-#define PLUS_Button                16
-#define MINUS_Button               17
-#define RESET_Button               22
 
 #define MATRIX_WIDTH               96
 #define MATRIX_HEIGHT              32
