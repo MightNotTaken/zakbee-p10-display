@@ -21,8 +21,8 @@ namespace Display {
     void begin() {
       BLACK = dma_display->color565(0, 0, 0);
       WHITE = dma_display->color565(255, 255, 255);
-      GREEN = dma_display->color565(255, 0, 0);
-      RED = dma_display->color565(0, 255, 0);
+      GREEN = dma_display->color565(0, 255, 0);
+      RED = dma_display->color565(255, 0, 0);
       BLUE = dma_display->color565(0, 0, 255);
     }
   };
