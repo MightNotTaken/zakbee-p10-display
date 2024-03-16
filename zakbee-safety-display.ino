@@ -10,11 +10,6 @@ void setup() {
   Display::begin();
   DataSource::begin();
   GPIOs::begin();
-  setInterval([]() { 
-    for (auto source: DataSource::sources) {
-      source->show();
-    }
-  }, 500);
 }
 
 void loop() {
