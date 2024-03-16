@@ -10,21 +10,32 @@ class DataSource_T {
   InputGPIO* gpio;
   String data;
 public:
-  DataSource_T(int pin, String data): data(data) {
+  DataSource_T(int pin, String _data) {
+    this->data = _data;
     this->gpio = new InputGPIO(pin, INPUT_PULLDOWN);
+  }
+
+  void registerDS() {
     GPIOs::registerInput(this->gpio); 
   }
 
   void onEmergency(std::function<void(String)> callback) {
     this->gpio->onStateLow([this, callback]() {
+      console.log("State low");
       callback(this->data);
     });
   }
 
   void onIssueResolve(std::function<void(String)> callback) {
     this->gpio->onStateHigh([this, callback]() {
+      console.log("State high");
       callback(this->data);
     });
+  }
+
+  String toString() {
+    String data = this->data + ":" + gpio->getGPIO();
+    return data;
   }
 
   ~DataSource_T() {
@@ -63,6 +74,7 @@ namespace DataSource {
           DataSource::startRoutine();
         }
       });
+      ds->registerDS();
       DataSource::sources.push_back(ds);
     }
     DataSource::startRoutine();

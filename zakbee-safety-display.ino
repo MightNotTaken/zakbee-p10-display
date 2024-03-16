@@ -8,6 +8,9 @@ void setup() {
 
   Display::begin();
   DataSource::begin();
+  for (auto source: DataSource::sources) {
+    console.log(*source);
+  }
 }
 
 void loop() {

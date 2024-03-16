@@ -15,6 +15,10 @@ class InputGPIO {
       this->GPIO = GPIO;
     }
 
+    uint8_t getGPIO() {
+      return GPIO;
+    }
+
     void onStateHigh(std::function<void()> callback) {
       this->stateHighCallback = callback;
     }
