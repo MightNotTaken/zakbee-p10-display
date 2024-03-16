@@ -50,6 +50,7 @@ namespace Display {
     FourScanPanel->setTextColor(color);
   }
   void display(String message) {
+    console.log("displaying", message);
     dma_display->clearScreen();
     FourScanPanel->setCursor(0, 0);
     FourScanPanel->print(message.c_str());

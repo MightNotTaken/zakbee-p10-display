@@ -44,8 +44,10 @@ namespace DataSource {
 
   void begin() {
     for (auto [gpio, message]: Configuration::gpioMessagePair) {
+      console.log(gpio, message);
       DataSource_T* ds = new DataSource_T(gpio, message);
       ds->onEmergency([](String message) {
+        console.log("Emergency message received from", message);
         if (std::find(emergencies.begin(), emergencies.end(), message) == emergencies.end()) {
           emergencies.push_back(message);
           DataSource::pauseRoutine();
@@ -53,6 +55,7 @@ namespace DataSource {
         }
       });
       ds->onIssueResolve([](String message) {
+        console.log(message, "Emergency resolved");
         auto it = std::find(emergencies.begin(), emergencies.end(), message);
         if (it != emergencies.end()) {
           emergencies.erase(it);
@@ -63,6 +66,7 @@ namespace DataSource {
       DataSource::sources.push_back(ds);
     }
     DataSource::startRoutine();
+    console.log(Configuration::fallbackMessages);
   }
 
   void pauseRoutine() {
@@ -74,19 +78,18 @@ namespace DataSource {
     DataSource::routineTracker = setImmediate([]() {
       if (!DataSource::emergencies.empty()) {
         Display::setColor(Display::Colors::RED);
-        auto frontMessage = std::move(DataSource::emergencies.front());
+        String frontMessage = DataSource::emergencies.front();
         DataSource::emergencies.erase(DataSource::emergencies.begin());
-        DataSource::emergencies.push_back(std::move(frontMessage));
-        Display::display(frontMessage);
+        DataSource::emergencies.push_back(frontMessage);
+        Display::display(frontMessage.c_str());
         return;
       }
       if (!Configuration::fallbackMessages.empty()) {
         Display::setColor(Display::Colors::GREEN);
-        auto frontMessage = std::move(Configuration::fallbackMessages.front());
+        String frontMessage = Configuration::fallbackMessages.front();
         Configuration::fallbackMessages.erase(Configuration::fallbackMessages.begin());
-        Configuration::fallbackMessages.push_back(std::move(frontMessage));
-        Display::display(frontMessage);
-        console.log(frontMessage);
+        Configuration::fallbackMessages.push_back(frontMessage);
+        Display::display(frontMessage.c_str());
       }
     }, SECONDS(3));
   }

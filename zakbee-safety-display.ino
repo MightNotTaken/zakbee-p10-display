@@ -6,10 +6,6 @@
 void setup() {  
   Serial.begin(115200);
 
-  setInterval([]() {
-    Serial.println("its working");
-  }, 1000);
-
   Display::begin();
   DataSource::begin();
 }
