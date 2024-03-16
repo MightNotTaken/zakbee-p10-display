@@ -28,7 +28,6 @@ namespace Display {
   };
 
   bool begin() {
-
     HUB75_I2S_CFG mxconfig(
       PANEL_RES_X * 2,
       PANEL_RES_Y / 2,
@@ -45,6 +44,7 @@ namespace Display {
     FourScanPanel->setPhysicalPanelScanRate(FOUR_SCAN_32PX_HIGH);
     FourScanPanel->setTextSize(1);
     FourScanPanel->setTextWrap(true);
+    return true;
   }
   void setColor(uint16_t color) {
     FourScanPanel->setTextColor(color);

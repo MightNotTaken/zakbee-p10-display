@@ -1,14 +1,14 @@
 #ifndef BOARD_H__
 #define BOARD_H__
 
-#define M1_KEY                    34
-#define M2_KEY                    35
-#define M3_KEY                    32
-#define M4_KEY                    33
-#define M5_KEY                     2
-#define M6_KEY                     3
-#define M7_KEY                    22
-#define M8_KEY                    21
+#define M1_KEY                    13//34
+#define M2_KEY                    13//35
+#define M3_KEY                    13//32
+#define M4_KEY                    13//33
+#define M5_KEY                    13// 2
+#define M6_KEY                    13// 3
+#define M7_KEY                    13//22
+#define M8_KEY                    13//21
 
 #define MESSAGE_1                 "PRINTING - LAMINATION"
 #define MESSAGE_2                 "SLITTING-HOT ROOM"
