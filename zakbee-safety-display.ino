@@ -10,9 +10,11 @@ void setup() {
   Display::begin();
   DataSource::begin();
   GPIOs::begin();
-  for (auto source: DataSource::sources) {
-    console.log(*source);
-  }
+  setInterval([]() { 
+    for (auto source: DataSource::sources) {
+      source->show();
+    }
+  }, 500);
 }
 
 void loop() {

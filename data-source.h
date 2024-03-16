@@ -38,6 +38,10 @@ public:
     return data;
   }
 
+  void show() {
+    console.log("pin state of ", gpio->getGPIO(), "is", gpio->getCurrentState() ? "HIGH" : "LOW");
+  }
+
   ~DataSource_T() {
     GPIOs::unregisterInput(this->gpio);
   }
