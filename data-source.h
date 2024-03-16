@@ -11,7 +11,7 @@ class DataSource_T {
   String data;
 public:
   DataSource_T(int pin, String data): data(data) {
-    this->gpio = new InputGPIO(pin);
+    this->gpio = new InputGPIO(pin, INPUT_PULLDOWN);
     GPIOs::registerInput(this->gpio); 
   }
 
