@@ -1,78 +1,58 @@
 #ifndef DISPLAY_H__
 #define DISPLAY_H__
-#include <RGBmatrixPanel.h>
-
-#define OE                         13
-#define LAT                        23
-#define CLK                        21
-#define A                          27
-#define B                          19
-#define C                          14
-
-#define MATRIX_WIDTH               96
-#define MATRIX_HEIGHT              32
-
+#include "ESP32-HUB75-MatrixPanel-I2S-DMA.h"
+#include "ESP32-VirtualMatrixPanel-I2S-DMA.h"
+#define PANEL_RES_X 32
+#define PANEL_RES_Y 32
+#define NUM_ROWS 1
+#define NUM_COLS 3
+#define SERPENT true
+#define TOPDOWN false
 namespace Display {
-  String currentMessage = "";
-  IntervalReference scroller;
-  int margin = 2;
-  int border = 2;
-  int textPosition = 0;
-  uint32_t scrollDelay = SECONDS(.5);
-  RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, true, 3);
-  void begin() {
-    matrix.begin();
-    matrix.fillScreen(0);
-  }
+  MatrixPanel_I2S_DMA *dma_display = nullptr;
+  VirtualMatrixPanel *FourScanPanel = nullptr;
+  namespace Colors {
+    uint16_t BLACK;
+    uint16_t WHITE;
+    uint16_t GREEN;
+    uint16_t RED;
+    uint16_t BLUE;
 
-  template<typename T>
-  void displayBorder(int thickness, T color, int cutvalue = 0) {
-    if (thickness <= cutvalue) {
-      return;
+    void begin() {
+      BLACK = dma_display->color565(0, 0, 0);
+      WHITE = dma_display->color565(255, 255, 255);
+      GREEN = dma_display->color565(255, 0, 0);
+      RED = dma_display->color565(0, 255, 0);
+      BLUE = dma_display->color565(0, 0, 255);
     }
-    int start = thickness - 1;
-    matrix.drawRect(start, start, MATRIX_WIDTH - 2 * start, MATRIX_HEIGHT - 2 * start, color);
-    return displayBorder(thickness - 2,  color);
-  }
+  };
 
-  void displayText(String text) {
-    matrix.setTextSize(3);
-    matrix.setCursor(Display::textPosition, 6);
-    matrix.print(text);
-  }
+  bool begin() {
 
-  void displayMargin() {
-    Display::displayBorder(Display::border + Display::margin, matrix.Color333(0, 0, 0), Display::border);
-  }
-
-  void displayTextMarginBorder() {
-    Display::displayText(Display::currentMessage);
-    Display::displayMargin();
-    Display::displayBorder(Display::border, matrix.Color333(7, 0, 0));
-  }
-
-  void resetPosition() {
-    Display::textPosition = Display::margin + Display::border;
-  }
-
-  void scrollIfNeeded() {
-    if (Display::currentMessage.length() > MATRIX_WIDTH - 2 * Display::border - 2 * Display::margin) {
-      scroller = setInterval([]() {
-        Display::textPosition --;
-        if (Display::textPosition < Display::border + Display::margin - 15 * Display::currentMessage.length()) {
-          Display::resetPosition();
-        }
-        Display::displayTextMarginBorder();
-      }, Display::scrollDelay);
+    HUB75_I2S_CFG mxconfig(
+      PANEL_RES_X * 2,
+      PANEL_RES_Y / 2,
+      NUM_ROWS * NUM_COLS);
+    mxconfig.clkphase = false;
+    dma_display = new MatrixPanel_I2S_DMA(mxconfig);
+    dma_display->setBrightness8(40);
+    if (not dma_display->begin()) {
+      return false;
     }
+    dma_display->clearScreen();
+    Colors::begin();
+    FourScanPanel = new VirtualMatrixPanel((*dma_display), NUM_ROWS, NUM_COLS, PANEL_RES_X, PANEL_RES_Y);
+    FourScanPanel->setPhysicalPanelScanRate(FOUR_SCAN_32PX_HIGH);
+    FourScanPanel->setTextSize(1);
+    FourScanPanel->setTextWrap(true);
   }
-
+  void setColor(uint16_t color) {
+    FourScanPanel->setTextColor(color);
+  }
   void display(String message) {
-    clearInterval(scroller);
-    Display::currentMessage = message;
-    Display::resetPosition();
-    Display::displayTextMarginBorder();
-    Display::scrollIfNeeded();
+    dma_display->clearScreen();
+    FourScanPanel->setCursor(0, 0);
+    FourScanPanel->print(message.c_str());
   }
 };
 #endif
