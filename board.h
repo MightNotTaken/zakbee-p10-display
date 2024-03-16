@@ -6,7 +6,7 @@
 #define M3_KEY                    32
 #define M4_KEY                    33
 #define M5_KEY                     2
-#define M6_KEY                     3
+#define M6_KEY                    18
 #define M7_KEY                    22
 #define M8_KEY                    21
 
